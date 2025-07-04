@@ -1,0 +1,11 @@
+[project]
+name = "NullReceiver-Server"
+version = "0.1.0"
+description = "Server app for store minimum data for identify user(nickname/hash_password) and implement functionality for P2P connection between NullReceiver-Clients"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.115.13",
+    "redis>=6.2.0",
+    "uvicorn>=0.34.3",
+    "websockets>=15.0.1",
+]
