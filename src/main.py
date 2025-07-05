@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
-from .utils.connection_manager import WSConnectionManager
+from src.services.connection_manager import WSConnectionManager
 
 app = FastAPI()
 
