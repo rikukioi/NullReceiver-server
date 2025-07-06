@@ -2,10 +2,11 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 
-from src.services.connection_manager import WSConnectionManager
+from src.routes.auth import router as auth_router
+from src.services.ws_connection_manager import WSConnectionManager
 
 app = FastAPI()
-
+app.include_router(auth_router)
 
 manager = WSConnectionManager()
 
@@ -39,6 +40,4 @@ async def websocket(websocket: WebSocket) -> None:
 
 
 if __name__ == "__main__":
-    uvicorn.run(
-        "src.main:app", host="127.0.0.1", port=23156, reload=True, reload_delay=5
-    )
+    uvicorn.run("src.main:app", host="0.0.0.0", port=23156, reload=True, reload_delay=5)
