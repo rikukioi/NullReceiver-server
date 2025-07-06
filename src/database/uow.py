@@ -1,8 +1,10 @@
-from contextlib import asynccontextmanager
 from typing import AsyncGenerator
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from .session import AsyncSessionLocal
+
 from src.database.repository import UserRepository
+
+from .session import AsyncSessionLocal
 
 
 class UnitOfWork:
@@ -11,6 +13,7 @@ class UnitOfWork:
         self.user_repo = UserRepository(self.session)
 
     async def __aenter__(self):
+        await self.session.begin()
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
@@ -20,15 +23,9 @@ class UnitOfWork:
             else:
                 await self.session.commit()
         finally:
-            self.session.close()
+            await self.session.close()
 
 
-@asynccontextmanager
 async def get_auto_session() -> AsyncGenerator[UnitOfWork, None]:
     async with UnitOfWork(AsyncSessionLocal()) as uow:
         yield uow
-
-
-async def get_uow_dep() -> UnitOfWork:
-    async with get_auto_session() as uow:
-        return uow
