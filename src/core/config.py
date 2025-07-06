@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=PROJECT_DIR / ".env",
         env_nested_delimiter="_",
+        extra="ignore",
     )
 
 
