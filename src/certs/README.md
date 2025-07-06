@@ -5,10 +5,10 @@
 
 ```shell
 # Чтобы сгенерировать приватный ключ RSA, размером 2048
-openssl genrsa -out jwt-private.pem 2048
+openssl genrsa -out jwt_private.pem 2048
 ```
 
 ```shell
 # Чтобы сгенерировать публичный ключ RSA на основе приватного
-openssl rsa -in jwt-private.pem -outform PEM -pubout -out jwt-public.pem
+openssl rsa -in jwt-private.pem -outform PEM -pubout -out jwt_public.pem
 ```
