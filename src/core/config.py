@@ -8,6 +8,8 @@ PROJECT_DIR = APP_DIR.parent
 
 class AuthJWT(BaseModel):
     algorithm: str = "RS256"
+    access_token_expire_seconds: int = 600
+
     private_key_path: Path = APP_DIR / "certs" / "jwt_private.pem"
     public_key_path: Path = APP_DIR / "certs" / "jwt_public.pem"
 
