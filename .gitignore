@@ -198,3 +198,9 @@ cython_debug/
 
 # vscode
 .vscode
+
+# sqlite
+dev.db
+
+# key-certs
+*.pem

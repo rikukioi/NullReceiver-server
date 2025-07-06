@@ -1,0 +1,66 @@
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    expose:
+      - 5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - nullreceivernetwork
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  pgadmin-tool:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin-tool
+    env_file:
+      - ./.env
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+      - PGADMIN_LISTEN_PORT=5050
+    ports:
+      - "5050:5050"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - nullreceivernetwork
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+  NullReceiverServer:
+    build: ./
+    image: nullreceiver-server
+    container_name: NullReceiverServer
+    restart: on-failure
+    ports:
+      - "23156:23156"
+    networks:
+      - nullreceivernetwork
+    command: uv run python -m src.main
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+
+volumes:
+  postgres-data:
+    name: postgres-data
+  pgadmin-data:
+    name: pgadmin-data
+
+networks:
+  nullreceivernetwork:
+    driver: bridge

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, LargeBinary
 
 from .base import BaseTable
 
@@ -7,5 +7,5 @@ class User(BaseTable):
     __tablename__ = "NR_USER"
 
     id = Column(Integer, primary_key=True)
-    nickname = Column(String(30), unique=True, index=True, nullable=False)
-    password = Column(String(80), nullable=False)
+    username = Column(String(30), unique=True, index=True, nullable=False)
+    password = Column(LargeBinary, nullable=False)
