@@ -1,6 +1,6 @@
 [project]
 name = "NullReceiver-Server"
-version = "0.1.0"
+version = "0.1.1"
 description = "Server app for store minimum data for identify user(nickname/hash_password) and implement functionality for P2P connection between NullReceiver-Clients"
 requires-python = ">=3.13"
 dependencies = [
@@ -8,6 +8,7 @@ dependencies = [
     "alembic>=1.16.2",
     "asyncpg>=0.30.0",
     "fastapi>=0.115.13",
+    "python-jose>=3.5.0",
     "redis>=6.2.0",
     "sqlalchemy>=2.0.41",
     "uvicorn>=0.34.3",
