@@ -9,7 +9,7 @@ class UserAuthData(BaseModel):
 class UserInDatabase(BaseModel):
     id: int
     username: str
-    hashed_pass: bytes
+    password: bytes
 
     model_config = {
         "from_attributes": True,
