@@ -1,4 +1,4 @@
-from .auth import TokenResponse, UserAuthData
+from .auth import TokenResponse, UserAuthData, UserInDatabase
 
 
-__all__ = ["UserAuthData", "TokenResponse"]
+__all__ = ["UserAuthData", "TokenResponse", "UserInDatabase"]
