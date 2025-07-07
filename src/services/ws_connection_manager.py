@@ -5,26 +5,14 @@ class WSConnectionManager:
     def __init__(self):
         self.active_connections: dict[str, WebSocket] = {}
 
-    async def connect(self, nickname: str, websocket: WebSocket):
-        self.active_connections[nickname] = websocket
+    def connect(self, username: str, websocket: WebSocket) -> None:
+        self.active_connections[username] = websocket
 
-    def disconnect(self, nickname: str):
-        if nickname in self.active_connections:
-            del self.active_connections[nickname]
+    def disconnect(self, username: str) -> None:
+        self.active_connections.pop(username, None)
 
-    async def personal_message(self, message: str, nickname: str, sender: str):
-        if nickname in self.active_connections:
-            try:
-                await self.active_connections[nickname].send_json(
-                    {"sender": sender, "message": message}
-                )
-            except Exception as e:
-                print(f"Ошибка отправки сообщения для {nickname}: {e}")
-                raise ValueError(f"Client {nickname} is offline")
+    def get_for_broadcast(self) -> list[WebSocket]:
+        return list(self.active_connections.values())
 
-    async def broadcast(self, message: str, sender: str):
-        for nickname, connection in self.active_connections.items():
-            try:
-                await connection.send_json({"sender": sender, "message": message})
-            except Exception as e:
-                print(f"Ошибка broadcast для {nickname}: {e}")
+    def get_user_sock(self, username: str) -> WebSocket | None:
+        return self.active_connections.get(username)

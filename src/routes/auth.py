@@ -52,5 +52,5 @@ async def login_user(
     }
     return TokenResponse(
         access_token=encode_jwt(payload=jwt_payload),
-        token_type="Bearer",
+        token_type="WebSocket",
     )
