@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Query
 from fastapi.websockets import WebSocket, WebSocketDisconnect
 from src.core.auth_utils import decode_jwt
-
+from typing import Annotated
 from src.services import WSConnectionManager, MessageDeliveryService
 
 router = APIRouter(tags=["WEBSOCKET"])
@@ -11,10 +11,11 @@ message_service = MessageDeliveryService()
 
 
 @router.websocket("/ws")
-async def websocket(websocket: WebSocket) -> None:
-    token = websocket.query_params.get("token")
-
-    if not token:
+async def websocket(
+    websocket: WebSocket,
+    token: Annotated[str | None, Query()] = None,
+) -> None:
+    if token is None:
         await websocket.close(
             code=status.WS_1008_POLICY_VIOLATION,
             reason="Отсутствие токена.",
@@ -37,12 +38,9 @@ async def websocket(websocket: WebSocket) -> None:
         return
 
     await websocket.accept()
-
+    manager.connect(username, websocket)
+    print(f"Подключился {username}")
     try:
-        await manager.connect(username, websocket)
-
-        print(f"Подключился {username}")
-
         while True:
             data = await websocket.receive_json()
 
@@ -56,7 +54,8 @@ async def websocket(websocket: WebSocket) -> None:
             else:
                 socket = await manager.get_user_sock(data["username"])
                 if socket is None:
-                    websocket.send_text("Пользователь оффлайн.")
+                    await websocket.send_text("Пользователь оффлайн.")
+                    continue
 
                 await message_service.personal_message(
                     receiver_socket=socket,

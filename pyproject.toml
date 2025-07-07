@@ -1,6 +1,6 @@
 [project]
 name = "NullReceiver-Server"
-version = "0.2.0"
+version = "0.2.11"
 description = "Server app for store minimum data for identify user(nickname/hash_password) and implement functionality for P2P connection between NullReceiver-Clients"
 requires-python = ">=3.13"
 dependencies = [
