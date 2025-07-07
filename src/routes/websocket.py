@@ -45,14 +45,14 @@ async def websocket(
             data = await websocket.receive_json()
 
             if data["username"] == "broadcast":
-                sockets = await manager.get_for_broadcast()
+                sockets = manager.get_for_broadcast()
                 await message_service.broadcast_message(
                     sockets,
                     message=data["message"],
                     sender=username,
                 )
             else:
-                socket = await manager.get_user_sock(data["username"])
+                socket = manager.get_user_sock(data["username"])
                 if socket is None:
                     await websocket.send_text("Пользователь оффлайн.")
                     continue
