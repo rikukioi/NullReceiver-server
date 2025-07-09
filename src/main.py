@@ -10,7 +10,7 @@ from src.routes.websocket import router as ws_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    configure_logging()
+    configure_logging(level=10)
 
     yield
 
