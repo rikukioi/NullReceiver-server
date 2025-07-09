@@ -1,0 +1,7 @@
+{
+    "type": "ack",
+    "payload": {
+        "message_id": "",
+        "to_username": ""
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "type":"ping",
+    "payload":{
+        "from_username":""
+    }
+}

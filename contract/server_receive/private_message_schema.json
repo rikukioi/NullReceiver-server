@@ -1,0 +1,9 @@
+{
+    "type":"message",
+    "payload":{
+        "from_username":"",
+        "to_username":"",
+        "message":"",
+        "message_id":""
+    }
+}
