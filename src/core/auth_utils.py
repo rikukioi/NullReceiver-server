@@ -1,7 +1,9 @@
-import jwt
-import bcrypt
+from datetime import UTC, datetime, timedelta
 from typing import Any
-from datetime import datetime, UTC, timedelta
+
+import bcrypt
+import jwt
+from fastapi import HTTPException, status
 
 from src.core.app_config import settings
 
@@ -62,3 +64,18 @@ def check_password(
         password=password.encode(),
         hashed_password=hashed_password,
     )
+
+
+def validate_token(token: str | None) -> str:
+    if token is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    try:
+        payload: dict = decode_jwt(token=token)
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    username = payload.get("username")
+    if not username:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    return username
