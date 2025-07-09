@@ -9,46 +9,18 @@ def ensure_logs_dir_exist() -> None:
     logs_dir.mkdir(parents=True, exist_ok=True)
 
 
-def configure_third_party_loggers(prod: bool = True) -> None:
-    if prod:
-        logging.getLogger("uvicorn").setLevel(logging.WARNING)
-        logging.getLogger("uvicorn.error").setLevel(logging.WARNING)
-        logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
-
-        logging.getLogger("fastapi").setLevel(logging.INFO)
-        logging.getLogger("starlette").setLevel(logging.WARNING)
-
-        logging.getLogger("sqlalchemy").setLevel(logging.WARNING)
-        logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
-        logging.getLogger("sqlalchemy.pool").setLevel(logging.ERROR)
-        logging.getLogger("sqlalchemy.dialects").setLevel(logging.ERROR)
-
-        logging.getLogger("alembic").setLevel(logging.INFO)
-
-        logging.getLogger("httpx").setLevel(logging.WARNING)
-        logging.getLogger("asyncpg").setLevel(logging.WARNING)
-    else:
-        logging.getLogger("uvicorn").setLevel(logging.INFO)
-        logging.getLogger("uvicorn.error").setLevel(logging.INFO)
-        logging.getLogger("uvicorn.access").setLevel(logging.INFO)
-
-        logging.getLogger("fastapi").setLevel(logging.DEBUG)
-        logging.getLogger("starlette").setLevel(logging.DEBUG)
-
-        logging.getLogger("sqlalchemy").setLevel(logging.INFO)
-        logging.getLogger("sqlalchemy.engine").setLevel(logging.DEBUG)
-        logging.getLogger("sqlalchemy.pool").setLevel(logging.INFO)
-        logging.getLogger("sqlalchemy.dialects").setLevel(logging.INFO)
-
-        logging.getLogger("alembic").setLevel(logging.DEBUG)
-
-        logging.getLogger("httpx").setLevel(logging.INFO)
-        logging.getLogger("asyncpg").setLevel(logging.INFO)
+def configure_third_party_loggers() -> None:
+    # Очистка от сторонних хэндлеров
+    uvicorn_loggers = ["uvicorn", "uvicorn.error", "uvicorn.access"]
+    for logger_name in uvicorn_loggers:
+        uvicorn_logger = logging.getLogger(logger_name)
+        uvicorn_logger.handlers.clear()
+        uvicorn_logger.propagate = True
 
 
 def configure_logging(level=logging.INFO) -> None:
     formatter = logging.Formatter(
-        fmt="[%(asctime)s] | %(levelname)7s | [%(module)15s:%(lineno)3d] | %(message)s",
+        fmt="[%(asctime)s.%(msecs)03d] | %(levelname)7s | %(message)s",
         datefmt="%Y-%m-%d  %H:%M:%S",
     )
 
@@ -83,3 +55,5 @@ def configure_logging(level=logging.INFO) -> None:
         root_logger.addHandler(file_handler)
         root_logger.addHandler(error_handler)
         root_logger.addHandler(console_handler)
+
+    configure_third_party_loggers()
