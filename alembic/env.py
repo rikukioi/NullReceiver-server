@@ -3,7 +3,7 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from src.core.config import settings
+from src.core.app_config import settings
 from src.database.models.base import Base
 
 DATABASE_URL = settings.postgres.database_url.replace("+asyncpg", "")
