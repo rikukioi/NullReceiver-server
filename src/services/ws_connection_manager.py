@@ -11,8 +11,8 @@ class WSConnectionManager:
     def disconnect(self, username: str) -> None:
         self.active_connections.pop(username, None)
 
-    def get_for_broadcast(self) -> list[WebSocket]:
-        return list(self.active_connections.values())
-
     def get_user_sock(self, username: str) -> WebSocket | None:
         return self.active_connections.get(username)
+
+
+SocketManager = WSConnectionManager()

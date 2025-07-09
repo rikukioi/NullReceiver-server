@@ -1,0 +1,10 @@
+{
+    "type": "error",
+    "payload": {
+        "code": "",
+        "detail": ""
+    },
+    "meta":{
+        "timestamp":""
+    }
+}
