@@ -1,4 +1,3 @@
-import logging
 from contextlib import asynccontextmanager
 
 import uvicorn
@@ -12,12 +11,8 @@ from src.routes.websocket import router as ws_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     configure_logging()
-    logger = logging.getLogger(__name__)
-    logger.info("Запуск сервера")
 
     yield
-
-    logger.info("Сервер остановлен")
 
 
 app = FastAPI(lifespan=lifespan)
