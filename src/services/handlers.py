@@ -38,6 +38,7 @@ async def handle_message(
                 meta={"username": schema.to_username},
             )
         )
+        return
 
     await receiver_sock.send_json(data)
 
@@ -68,5 +69,6 @@ async def handle_ack(
                 meta={"username": schema.to_username},
             )
         )
+        return
 
     await receiver_sock.send_json(data)
