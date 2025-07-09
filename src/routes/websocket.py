@@ -1,13 +1,19 @@
-from fastapi import APIRouter, HTTPException, status, Query
-from fastapi.websockets import WebSocket, WebSocketDisconnect
-from src.core.auth_utils import decode_jwt
+import logging
 from typing import Annotated
-from src.services import WSConnectionManager, MessageDeliveryService
+
+from fastapi import APIRouter, HTTPException, Query, status
+from fastapi.websockets import WebSocket, WebSocketDisconnect
+
+from src.core.auth_utils import decode_jwt
+from src.services import MessageDeliveryService, WSConnectionManager
 
 router = APIRouter(tags=["WEBSOCKET"])
 
 manager = WSConnectionManager()
 message_service = MessageDeliveryService()
+
+
+logger = logging.getLogger(__name__)
 
 
 @router.websocket("/ws")
@@ -39,30 +45,22 @@ async def websocket(
 
     await websocket.accept()
     manager.connect(username, websocket)
-    print(f"Подключился {username}")
+    logging.info("Подключился %s", username)
     try:
         while True:
             data = await websocket.receive_json()
 
-            if data["username"] == "broadcast":
-                sockets = manager.get_for_broadcast()
-                await message_service.broadcast_message(
-                    sockets,
-                    message=data["message"],
-                    sender=username,
-                )
-            else:
-                socket = manager.get_user_sock(data["username"])
-                if socket is None:
-                    await websocket.send_text("Пользователь оффлайн.")
-                    continue
+            socket = manager.get_user_sock(data["username"])
+            if socket is None:
+                await websocket.send_text("Пользователь оффлайн.")
+                continue
 
-                await message_service.personal_message(
-                    receiver_socket=socket,
-                    message=data["message"],
-                    sender=username,
-                )
+            await message_service.personal_message(
+                receiver_socket=socket,
+                message=data["message"],
+                sender=username,
+            )
 
     except WebSocketDisconnect:
         manager.disconnect(username)
-        print(f"Отключился {username}")
+        logging.info("Отключился %s", username)
