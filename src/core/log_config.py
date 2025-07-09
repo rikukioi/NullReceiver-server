@@ -9,18 +9,35 @@ def ensure_logs_dir_exist() -> None:
     logs_dir.mkdir(parents=True, exist_ok=True)
 
 
-def configure_third_party_loggers() -> None:
+def configure_third_party_loggers(level=logging.DEBUG) -> None:
     # Очистка от сторонних хэндлеров
-    uvicorn_loggers = ["uvicorn", "uvicorn.error", "uvicorn.access"]
-    for logger_name in uvicorn_loggers:
-        uvicorn_logger = logging.getLogger(logger_name)
-        uvicorn_logger.handlers.clear()
-        uvicorn_logger.propagate = True
+    third_party_loggers = [
+        "uvicorn",
+        "uvicorn.error",
+        "uvicorn.access",
+        "sqlalchemy",
+        "sqlalchemy.engine",
+        "sqlalchemy.pool",
+    ]
+    for logger_name in third_party_loggers:
+        logger = logging.getLogger(logger_name)
+        logger.setLevel(level)
+        logger.handlers.clear()
+        logger.propagate = True
+
+    # Отключение логгеров
+    loggers_to_disable = [
+        "sqlalchemy.orm.mapper",
+    ]
+    for logger_name in loggers_to_disable:
+        logger = logging.getLogger(logger_name)
+        logger.disabled = True
+        logger.propagate = False
 
 
 def configure_logging(level=logging.INFO) -> None:
     formatter = logging.Formatter(
-        fmt="[%(asctime)s.%(msecs)03d] | %(levelname)7s | %(message)s",
+        fmt="[%(asctime)s.%(msecs)03d] | %(levelname)7s | [%(name)s] - %(message)s",
         datefmt="%Y-%m-%d  %H:%M:%S",
     )
 
