@@ -13,8 +13,8 @@ from .schema_utils import make_error_payload
 class MessageRouter:
     def __init__(self):
         self._dispatcher = Dispatcher()
-        self._dispatcher.register_handler(handle_message)
-        self._dispatcher.register_handler(handle_ack)
+        self._dispatcher.register_handler("message", handle_message)
+        self._dispatcher.register_handler("ack", handle_ack)
 
     async def route(
         self,
